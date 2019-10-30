@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'basic_pages/basic'
+
   get 'bases/new'
 
   root 'static_pages#top' 
