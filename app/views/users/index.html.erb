@@ -15,23 +15,23 @@
     </div>
    <% end %>
   <%= will_paginate %>
-  <table class="table table-condensed table-hover" id="table-users">
-    <thead>
-      <tr>
-        <th><%= User.human_attribute_name :name %></th>
-      </tr>
-    </thead>
-
+  <table class="table table-condensed " id="table-users">
     <% @users.each do |user| %>
+     <%if !user.admin? %>
       <tr>
         <td><%= link_to user.name, user %>
-          ｜<%= link_to "基本情報編集", basic_info_path(user) %>
-          <% if current_user.admin? && !current_user?(user) %>
-            ｜<%= link_to "削除", user, method: :delete,
-                data: { confirm: "削除してよろしいですか？" }%>
-          <% end %>
+        <% if current_user.admin? && !current_user?(user) %>
+         <div>
+          ｜<%= link_to "削除", user, method: :delete,
+                data: { confirm: "削除してよろしいですか？" }, class:"btn btn-primary"%>
+            <% end %>
+         </div>
+         <div class="user-edit-area">
+          <%= link_to "編集", basic_info_path(user), class:"btn btn-lg btn-primary"%>
+         </div>
         </td>
       </tr>
+     <% end %> 
     <% end %>
   </table>
   <%= will_paginate %>

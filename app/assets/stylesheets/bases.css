@@ -1,0 +1,18 @@
+@charset "UTF-8";
+/* 拠点情報テーブル */
+.base-table {
+  vertical-align: middle;
+  text-align: center; }
+
+.btn-delete {
+  margin-top: 10px; }
+
+.btn-edit {
+  margin-top: 10px; }
+
+.btn-add {
+  padding: 10px 20px;
+  margin-top: 10px;
+  background-color: #f1eeee; }
+
+/*# sourceMappingURL=bases.css.map */
