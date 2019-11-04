@@ -1,0 +1,53 @@
+<% provide(:class_text, 'basic-info') %>
+<% provide(:button_text, '更新') %>
+<%= form_with(model: @user, url: attendances_update_zangyo_info_user_path(@user), local: true, method: :patch) do |f| %>
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h1 class="modal-title">【残業申請】</h1>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+           <thead>
+            <tr>
+             <th>日付</th>
+             <th>曜日</th>
+             <th>終了予定時間</th>
+             <th>翌日</th>
+             <th>業務処理内容</th>
+             <th>指示者確認㊞</th>
+            </tr>
+           </thead>
+           <tbody>
+
+            <%= f.fields_for :attendance do |attendance| %>
+            <tr>
+              <td><%= l(@attendance.worked_on, format: :short) %></td>
+               <td>
+                <% if @attendance.worked_on.wday == 6 %>
+                 <font color="Blue">土</font>
+                <% elsif @attendance.worked_on.wday == 0 %>
+                 <font color="RED">日</font>
+                <% else %>
+                 <%= $days_of_the_week[@attendance.worked_on.wday] %>
+                <% end %>
+              </td>
+              <td><%= attendance.time_field :end_plan, class: "form-control" %></td>
+              <td><%= attendance.check_box :next_day_flag, class: "form-control" %></td>
+              <td><%= attendance.text_field :gyoumu, class: "form-control" %></td>
+              <td><%= attendance.select :superior_id, User.where(superior: true).pluck(:name),class: "form-control" %></td>
+            <% end %> 
+           </tbody>
+          </table>
+        <div><%= f.submit "変更を送信する", class: "btn btn-primary btn-block btn-signup" %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ <% end %>

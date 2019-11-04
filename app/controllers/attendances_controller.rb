@@ -1,9 +1,9 @@
 class AttendancesController < ApplicationController
   include AttendancesHelper
-  before_action :set_user, only: [:edit_one_month, :update_one_month]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :edit_zangyo_info]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-  before_action :set_one_month, only: :edit_one_month
+  before_action :set_one_month, only: [:edit_one_month, :edit_zangyo_info]
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
 
@@ -50,10 +50,29 @@ class AttendancesController < ApplicationController
    redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
   
+  def edit_zangyo_info
+    @attendance = Attendance.find(params[:id])
+  end
+  
+  def update_zangyo_info
+    @attendance = Attendance.find(params[:id])
+    #@attendance.update_columns(params[:end_plan])
+    @user = User.find(@attendance.user_id)
+    @attendance.update_attributes(attendances_params_z)
+    flash[:info] = "残業申請を送信しました"
+    redirect_to @user
+  end
+  
+  
+  
    private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+    end
+    
+    def attendances_params_z
+      params.require(:user).permit(attendance: [:end_plan, :superior_id, :gyoumu, :next_day_flag])[:attendance]
     end
     
     def admin_or_correct_user

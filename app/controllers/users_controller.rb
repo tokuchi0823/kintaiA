@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
-  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_zangyo_info, :update_zangyo_info]
+  before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy,:edit_zangyo_info, :update_zangyo_info]
   #before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index, :edit, :update]
   before_action :set_one_month, only: :show 
@@ -71,6 +71,8 @@ class UsersController < ApplicationController
     flash[:success] = "#{registered_count}件登録しました"
     redirect_to users_path
   end
+  
+
   
    private
   
