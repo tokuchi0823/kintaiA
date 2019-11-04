@@ -66,6 +66,11 @@ class UsersController < ApplicationController
    @users = User.all.includes(:attendances)
   end
  
+  def insert
+    registered_count = insert_users
+    flash[:success] = "#{registered_count}件登録しました"
+    redirect_to users_path
+  end
   
    private
   
@@ -76,5 +81,19 @@ class UsersController < ApplicationController
    def basic_info_params
     params.require(:user).permit(:basic_time, :work_time)
    end
+   
+    def insert_users
+      # 登録処理前のレコード数
+      current_user_count = ::User.count
+      users = []
+      # windowsで作られたファイルに対応するので、encoding: "SJIS"を付けている
+      CSV.foreach(params[:users_file].path, headers: true, encoding: "SJIS") do |row|
+        users << ::User.new({ name: row["name"], email: row["email"], department: row["affiliation"], employee_number: row["employee_number"], uid: row["uid"], basic_time: row["basic_work_time"], designated_work_start_time: row["designated_work_start_time"], designated_work_end_time: row["designated_work_end_time"], superior: row["superior"], admin: row["admin"], password: row["password"]})
+      end
+      # importメソッドでバルクインサートできる
+      ::User.import(users)
+      # 何レコード登録できたかを返す
+      ::User.count - current_user_count
+    end
    
 end

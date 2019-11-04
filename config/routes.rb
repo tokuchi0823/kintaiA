@@ -14,6 +14,8 @@ Rails.application.routes.draw do
   patch 'update-basic-info', to: 'users#update_basic_info'
   get '/on_duty', to: 'users#on_duty'
   
+  post '/users', to: 'users#insert'
+  
   resources :bases
   
   resources :users do

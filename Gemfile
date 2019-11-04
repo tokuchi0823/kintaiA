@@ -15,6 +15,8 @@ gem 'bootstrap-will_paginate'
 gem 'faker'
 gem 'rails-i18n'
 gem 'rounding'
+gem 'activerecord-import'
+gem 'roo'
 
 group :development, :test do
   gem 'sqlite3'
