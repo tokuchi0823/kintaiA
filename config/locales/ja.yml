@@ -207,4 +207,5 @@ ja:
       time: "%H：%M"
       only_time: "%H"
       only_mi: "%M"
+      san: "%H%M"
     pm: 午後

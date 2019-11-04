@@ -98,7 +98,14 @@
           <td><%= day.note %></td>
           <td><%= l(day.end_plan.floor_to(15.minutes), format: :only_time) if day.end_plan.present? %></td>
           <td><%= l(day.end_plan.floor_to(15.minutes), format: :only_mi) if day.end_plan.present?%></td>
-          <td></td>
+          <td>
+           <% if day.next_day_flag? %>
+            <% wk_time = 24 %>
+            <%= (l(day.end_plan.floor_to(15.minutes), format: :time).to_f + wk_time) - l(@user.designated_work_end_time.floor_to(15.minutes), format: :time).to_f  if day.end_plan.present?%>
+           <% else %>
+            <%= l(day.end_plan.floor_to(15.minutes), format: :time).to_f - l(@user.designated_work_end_time.floor_to(15.minutes), format: :time).to_f  if day.end_plan.present?%>
+           <% end %>
+          </td>
           <td><%= day.gyoumu %></td>
           <td></td>
         </tr>
