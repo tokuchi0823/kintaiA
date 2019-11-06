@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20191104115218) do
     t.boolean "next_day_flag"
     t.string "gyoumu"
     t.integer "status"
-    t.integer "superior_id"
+    t.string "superior_id"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -45,12 +45,12 @@ ActiveRecord::Schema.define(version: 20191104115218) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2019-10-30 23:00:00"
-    t.datetime "work_time", default: "2019-10-30 22:30:00"
+    t.datetime "basic_time", default: "2019-11-05 23:00:00"
+    t.datetime "work_time", default: "2019-11-05 22:30:00"
     t.string "employee_number"
     t.string "uid"
-    t.datetime "designated_work_start_time", default: "2019-10-31 00:00:00"
-    t.datetime "designated_work_end_time", default: "2019-10-31 09:00:00"
+    t.datetime "designated_work_start_time", default: "2019-11-06 00:00:00"
+    t.datetime "designated_work_end_time", default: "2019-11-06 09:00:00"
     t.boolean "superior", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end

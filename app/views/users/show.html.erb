@@ -24,6 +24,18 @@
   </tr>   
  </table>
 </div>
+<% if current_user.superior?%>
+<div>【所属長承認申請のお知らせ】</div>
+<div>【勤怠変更申請のお知らせ】<%=current_user.id%></div>
+<div>
+<% if Attendance.where(superior_id: current_user.name).count >= 0 %>
+<%= link_to "【残業申請のお知らせ】", attendances_approval_zangyo_info_user_path(name: @user.name), remote: true, id: "link" %>
+<span class="info-count-red"><%= Attendance.where(superior_id: current_user.name).count %>件の通知があります</span>
+<% else %>
+【残業申請のお知らせ】
+<% end %>
+</div>
+<% end %>
 <div>
  <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary btn-attendance" %>
  <%= link_to "CSV出力", '#', class: "btn btn-primary btn-attendance" %>
@@ -64,7 +76,7 @@
    <tbody>
       <%  @attendances.each do |day| %>
         <tr>
-          <td><%= link_to "残業申請", attendances_edit_zangyo_info_user_path(day.id), remote: true, class: "btn btn-primary btn-attendance" %></td>
+          <td><%= link_to "残業申請", attendances_edit_zangyo_info_user_path(day), remote: true, class: "btn btn-primary btn-attendance" %></td>
           <td><%= l(day.worked_on, format: :short) %></td>
          <td>
           <% if day.worked_on.wday == 6 %>
@@ -107,7 +119,7 @@
            <% end %>
           </td>
           <td><%= day.gyoumu %></td>
-          <td></td>
+          <td><%= day.superior_id if day.superior_id.present? %></td>
         </tr>
       <% end %>
     </tbody>
@@ -134,3 +146,4 @@
  
 <!--モーダルウインドウ表示-->
 <div id="edit-zangyo-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="approval-zangyo-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

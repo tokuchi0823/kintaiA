@@ -1,6 +1,6 @@
 <% provide(:class_text, 'basic-info') %>
 <% provide(:button_text, '更新') %>
-<%= form_with(model: @user, url: attendances_update_zangyo_info_user_path(@user), local: true, method: :patch) do |f| %>
+<%= form_with(model: @attendance, url: attendances_update_zangyo_info_user_path(@attendance), local: true, method: :patch) do |f| %>
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
     <div class="modal-header">
@@ -24,8 +24,6 @@
             </tr>
            </thead>
            <tbody>
-
-            <%= f.fields_for :attendance do |attendance| %>
             <tr>
               <td><%= l(@attendance.worked_on, format: :short) %></td>
                <td>
@@ -37,11 +35,10 @@
                  <%= $days_of_the_week[@attendance.worked_on.wday] %>
                 <% end %>
               </td>
-              <td><%= attendance.time_field :end_plan, class: "form-control" %></td>
-              <td><%= attendance.check_box :next_day_flag, class: "form-control" %></td>
-              <td><%= attendance.text_field :gyoumu, class: "form-control" %></td>
-              <td><%= attendance.select :superior_id, User.where(superior: true).pluck(:name),class: "form-control" %></td>
-            <% end %> 
+              <td><%= f.time_field :end_plan, class: "form-control" %></td>
+              <td><%= f.check_box :next_day_flag, class: "form-control" %></td>
+              <td><%= f.text_field :gyoumu, class: "form-control" %></td>
+              <td><%= f.select :superior_id, User.where(superior: true).pluck(:name),class: "form-control" %></td>
            </tbody>
           </table>
         <div><%= f.submit "変更を送信する", class: "btn btn-primary btn-block btn-signup" %></div>

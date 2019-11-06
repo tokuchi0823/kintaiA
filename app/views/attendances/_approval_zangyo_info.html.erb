@@ -1,0 +1,99 @@
+<% provide(:class_text, 'basic-info') %>
+<% provide(:button_text, '更新') %>
+<%= form_with(model: @attendances, url: attendances_update_approval_zangyo_info_user_path(@attendances), local: true, method: :patch) do |f| %>
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-12">
+         <% old_userz = String.new%>  
+         <% new_userz = String.new%>  
+         <% @attendances.each do |a|%>
+         <% new_userz = User.find(a.user_id).name %>
+         <% if !old_userz.nil? && old_userz != new_userz%>
+           </tbody>
+          </table>
+         <h2 class="modal-title">【<%=User.find(a.user_id).name %>からの残業申請】</h2>
+          <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+           <thead>
+            <tr>
+             <th>日付</th>
+             <th>曜日</th>
+             <th>終了予定時間</th>
+             <th>指定勤務終了時間</th>
+             <th>時間外時間</th>
+             <th>業務処理内容</th>
+             <th>指示者確認㊞</th>
+             <th>変更</th>
+             <th>勤怠を確認する</th>
+            </tr>
+           </thead>
+           <tbody>
+            <tr>
+              <td><%= l(a.worked_on, format: :short) %></td>
+              <td>
+               <% if a.worked_on.wday == 6 %>
+                <font color="Blue">土</font>
+               <% elsif a.worked_on.wday == 0 %>
+                <font color="RED">日</font>
+               <% else %>
+                <%= $days_of_the_week[a.worked_on.wday] %>
+               <% end %>
+              </td>
+              <td><%= l(a.end_plan, format: :time) if a.end_plan.present? %></td>
+              <td><%= l(User.find(a.user_id).designated_work_end_time, format: :time) if User.find(a.user_id).designated_work_end_time.present?%></td>
+              <td>
+               <% if a.next_day_flag? %>
+                <% wk_time = 24 %>
+                <%= (l(a.end_plan.floor_to(15.minutes), format: :time).to_f + wk_time) - l(User.find(a.user_id).designated_work_end_time.floor_to(15.minutes), format: :time).to_f  if a.end_plan.present?%>
+               <% else %>
+                <%= l(a.end_plan.floor_to(15.minutes), format: :time).to_f - l(User.find(a.user_id).designated_work_end_time.floor_to(15.minutes), format: :time).to_f  if a.end_plan.present?%>
+               <% end %>
+              </td>
+              <td><%= a.gyoumu %></td>
+              <td><%= f.select :status,class: "form-control" %></td>
+              <td><%= f.check_box :next_day_flag, class: "form-control" %></td>
+              <td><%= link_to "確認", User.find(a.user_id),class: "btn btn-primary btn-block btn-signup"%></td>
+            </tr>
+            <% old_userz = new_userz %>
+           <% else %>
+            <tr>
+              <td><%= l(a.worked_on, format: :short) %></td>
+              <td>
+               <% if a.worked_on.wday == 6 %>
+                <font color="Blue">土</font>
+               <% elsif a.worked_on.wday == 0 %>
+                <font color="RED">日</font>
+               <% else %>
+                <%= $days_of_the_week[a.worked_on.wday] %>
+               <% end %>
+              </td>
+              <td><%= l(a.end_plan, format: :time)  if a.end_plan.present? %></td>
+              <td><%= l(User.find(a.user_id).designated_work_end_time, format: :time) if User.find(a.user_id).designated_work_end_time.present?%></td>
+              <td>
+               <% if a.next_day_flag? %>
+                <% wk_time = 24 %>
+                <%= (l(a.end_plan.floor_to(15.minutes), format: :time).to_f + wk_time) - l(User.find(a.user_id).designated_work_end_time.floor_to(15.minutes), format: :time).to_f  if a.end_plan.present?%>
+               <% else %>
+                <%= l(a.end_plan.floor_to(15.minutes), format: :time).to_f - l(User.find(a.user_id).designated_work_end_time.floor_to(15.minutes), format: :time).to_f  if a.end_plan.present?%>
+               <% end %>
+              </td>
+              <td><%= a.gyoumu %></td>
+              <td><%= f.select :status,class: "form-control" %></td>
+              <td><%= f.check_box :next_day_flag, class: "form-control" %></td>
+              <td><%= link_to "確認", User.find(a.user_id),class: "btn btn-primary btn-block btn-signup"%></td>
+            </tr>  
+            <% end %>
+      　 <% end %>
+        <div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
