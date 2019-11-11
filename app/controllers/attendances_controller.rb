@@ -66,8 +66,24 @@ class AttendancesController < ApplicationController
   
   def approval_zangyo_info
     #@attendances = Attendance.find(params[:id])
-    @attendances = Attendance.where(superior_id: params[:name]).order(:user_id)
+    @attendances = Attendance.where(superior_id: params[:name]).where(:status => 2..3 ).order(:user_id)
     #@user = User.find_by
+  end
+  
+  def update_approval_zangyo_info
+    #@attendance = Attendance.find(params[:id])
+     ActiveRecord::Base.transaction do # トランザクションを開始します。
+       attendances_params_zz.each do |id, item|
+        attendance = Attendance.find(id)
+        attendance.update_attributes!(item)
+       end
+      #@attendance.update_attributes(attendances_params_z)
+      flash[:info] = "残業申請を更新しました"
+      redirect_to(root_url)
+     end
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "aaa無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to @user
   end
   
    private
@@ -77,7 +93,11 @@ class AttendancesController < ApplicationController
     end
     
     def attendances_params_z
-      params.require(:attendance).permit(:end_plan, :superior_id, :gyoumu, :next_day_flag)
+      params.require(:attendance).permit(:end_plan, :superior_id, :gyoumu, :next_day_flag, :status)
+    end
+    
+    def attendances_params_zz
+      params.require(:attendance).permit(attendances: [:end_plan, :superior_id, :gyoumu, :next_day_flag, :status])[:attendances]
     end
     
     def admin_or_correct_user

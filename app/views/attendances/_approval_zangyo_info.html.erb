@@ -14,6 +14,7 @@
          <% old_userz = String.new%>  
          <% new_userz = String.new%>  
          <% @attendances.each do |a|%>
+          <%= f.fields_for "attendances[]", a do |attendance| %>
          <% new_userz = User.find(a.user_id).name %>
          <% if !old_userz.nil? && old_userz != new_userz%>
            </tbody>
@@ -56,8 +57,8 @@
                <% end %>
               </td>
               <td><%= a.gyoumu %></td>
-              <td><%= f.select :status,class: "form-control" %></td>
-              <td><%= f.check_box :next_day_flag, class: "form-control" %></td>
+              <td><%= attendance.select :status, [["なし",0],["申請中",3],["承認",1],["否認",2]],class: "form-control" %></td>
+              <td><%= f.check_box(:check, { :checked => false }, 1, 0)%></td>
               <td><%= link_to "確認", User.find(a.user_id),class: "btn btn-primary btn-block btn-signup"%></td>
             </tr>
             <% old_userz = new_userz %>
@@ -84,16 +85,26 @@
                <% end %>
               </td>
               <td><%= a.gyoumu %></td>
-              <td><%= f.select :status,class: "form-control" %></td>
-              <td><%= f.check_box :next_day_flag, class: "form-control" %></td>
+              <td><%= attendance.select :status, [["なし",0],["申請中",3],["承認",1],["否認",2]],class: "form-control" %></td>
+              <td><%= f.check_box(:check, { :checked => false }, 1, 0)%></td>
               <td><%= link_to "確認", User.find(a.user_id),class: "btn btn-primary btn-block btn-signup"%></td>
             </tr>  
+           <% if @attendances.last.id == a.id %>
+            </tbody>
+          </table>
+            <div class="center">
+             <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>     
+            </div>
+           <% end %>
             <% end %>
+           <% end %>
       　 <% end %>
-        <div></div>
         </div>
       </div>
     </div>
   </div>
+</div>
+</div>
+</div>
 </div>
 <% end %>

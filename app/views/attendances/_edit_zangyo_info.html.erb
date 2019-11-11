@@ -11,7 +11,7 @@
     </div>
     <div class="modal-body">
       <div class="row">
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-12" >
           <table class="table table-bordered table-condensed table-hover" id="table-attendances">
            <thead>
             <tr>
@@ -39,6 +39,7 @@
               <td><%= f.check_box :next_day_flag, class: "form-control" %></td>
               <td><%= f.text_field :gyoumu, class: "form-control" %></td>
               <td><%= f.select :superior_id, User.where(superior: true).pluck(:name),class: "form-control" %></td>
+              <%= f.hidden_field :status, :value => 3%>
            </tbody>
           </table>
         <div><%= f.submit "変更を送信する", class: "btn btn-primary btn-block btn-signup" %></div>

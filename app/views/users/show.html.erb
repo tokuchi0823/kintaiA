@@ -30,7 +30,7 @@
 <div>
 <% if Attendance.where(superior_id: current_user.name).count >= 0 %>
 <%= link_to "【残業申請のお知らせ】", attendances_approval_zangyo_info_user_path(name: @user.name), remote: true, id: "link" %>
-<span class="info-count-red"><%= Attendance.where(superior_id: current_user.name).count %>件の通知があります</span>
+<span class="info-count-red"><%= Attendance.where(superior_id: current_user.name).where(:status => 2..3 ).count %>件の通知があります</span>
 <% else %>
 【残業申請のお知らせ】
 <% end %>
@@ -119,7 +119,12 @@
            <% end %>
           </td>
           <td><%= day.gyoumu %></td>
-          <td><%= day.superior_id if day.superior_id.present? %></td>
+          <td><%= day.superior_id if day.superior_id.present? %>
+          <% if day.status != 0 %>
+          残業<%= $status[day.status] %>
+          <% end %>
+          </td>
+          <td><%= $status[0]  %></td>
         </tr>
       <% end %>
     </tbody>
