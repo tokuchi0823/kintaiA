@@ -75,14 +75,18 @@ class AttendancesController < ApplicationController
      ActiveRecord::Base.transaction do # トランザクションを開始します。
        attendances_params_zz.each do |id, item|
         attendance = Attendance.find(id)
-        attendance.update_attributes!(item)
+        if item[:check] == "1"
+         attendance.update_attributes!(item)
+        end
        end
       #@attendance.update_attributes(attendances_params_z)
+      #@attendance = Attendance.find(params[:id])
+      @user = User.find(current_user.id)
       flash[:info] = "残業申請を更新しました"
-      redirect_to(root_url)
+      redirect_to @user
      end
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
-    flash[:danger] = "aaa無効な入力データがあった為、更新をキャンセルしました。"
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to @user
   end
   
@@ -97,7 +101,7 @@ class AttendancesController < ApplicationController
     end
     
     def attendances_params_zz
-      params.require(:attendance).permit(attendances: [:end_plan, :superior_id, :gyoumu, :next_day_flag, :status])[:attendances]
+      params.require(:attendance).permit(attendances: [:end_plan, :superior_id, :gyoumu, :next_day_flag, :status, :check])[:attendances]
     end
     
     def admin_or_correct_user

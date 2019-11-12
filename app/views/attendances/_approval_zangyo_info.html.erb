@@ -58,9 +58,16 @@
               </td>
               <td><%= a.gyoumu %></td>
               <td><%= attendance.select :status, [["なし",0],["申請中",3],["承認",1],["否認",2]],class: "form-control" %></td>
-              <td><%= f.check_box(:check, { :checked => false }, 1, 0)%></td>
+              <td><%= attendance.check_box(:check, { :checked => false }, 1, 0)%></td>
               <td><%= link_to "確認", User.find(a.user_id),class: "btn btn-primary btn-block btn-signup"%></td>
             </tr>
+            <% if @attendances.last.id == a.id %>
+           </tbody>
+          </table>
+            <div class="center">
+             <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>     
+            </div>
+           <% end %>
             <% old_userz = new_userz %>
            <% else %>
             <tr>
@@ -86,7 +93,7 @@
               </td>
               <td><%= a.gyoumu %></td>
               <td><%= attendance.select :status, [["なし",0],["申請中",3],["承認",1],["否認",2]],class: "form-control" %></td>
-              <td><%= f.check_box(:check, { :checked => false }, 1, 0)%></td>
+              <td><%= attendance.check_box(:check, { :checked => false }, 1, 0)%></td>
               <td><%= link_to "確認", User.find(a.user_id),class: "btn btn-primary btn-block btn-signup"%></td>
             </tr>  
            <% if @attendances.last.id == a.id %>
