@@ -15,12 +15,14 @@ class AttendancesController < ApplicationController
     # 出勤時間が未登録であることを判定します。
     if @attendance.started_at.nil?
       if @attendance.update_attributes(started_at: Time.current.change(sec: 0))
+         @attendance.update_attributes(first_start_time: Time.current.change(sec: 0))
         flash[:info] = "おはようございます！"
       else
         flash[:danger] = UPDATE_ERROR_MSG
       end
     elsif @attendance.finished_at.nil?
       if @attendance.update_attributes(finished_at: Time.current.change(sec: 0))
+         @attendance.update_attributes(first_end_time: Time.current.change(sec: 0))
         flash[:info] = "お疲れ様でした。"
       else
         flash[:danger] = UPDATE_ERROR_MSG
@@ -34,10 +36,12 @@ class AttendancesController < ApplicationController
   
   def update_one_month
    ActiveRecord::Base.transaction do # トランザクションを開始します。
-    if attendances_invalid?
+    if attendances_invalid? 
      attendances_params.each do |id, item|
       attendance = Attendance.find(id)
+      if !item[:change_superior_id].blank?
       attendance.update_attributes!(item)
+      end
      end
       flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
       redirect_to user_url(date: params[:date])
@@ -93,7 +97,7 @@ class AttendancesController < ApplicationController
    private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :second_start_time, :change_superior_id, :change_status])[:attendances]
     end
     
     def attendances_params_z

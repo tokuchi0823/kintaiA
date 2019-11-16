@@ -18,4 +18,18 @@ module AttendancesHelper
     end
     return attendances
   end
+  
+  
+   def attendances_change_superior?
+    attendances = true
+    attendances_params.each do |id, item|
+      if item[:change_superior_id].blank? 
+        attendances = false
+        break
+      end
+    end
+    return attendances
+  end
+  
+  
 end

@@ -29,6 +29,8 @@ Rails.application.routes.draw do
       get 'attendances/approval_zangyo_info'
       patch 'attendances/update_approval_zangyo_info'
       
+      get 'attendances/approval_change_info'
+      patch 'attendances/update_approval_change_info'
     end
     resources :attendances, only: :update 
   end

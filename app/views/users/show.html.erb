@@ -30,8 +30,18 @@
 </div>
 <%if current_user == @user %> 
 <% if current_user.superior?%>
-<div>【所属長承認申請のお知らせ】</div>
-<div>【勤怠変更申請のお知らせ】</div>
+<div>
+ 【所属長承認申請のお知らせ】
+ </div>
+<div>
+ <% if Attendance.where(change_superior_id: current_user.name).where(:change_status => 2..3 ).count > 0 %>
+<%= link_to "【勤怠変更申請のお知らせ】", attendances_approval_change_info_user_path(name: @user.name), remote: true, id: "link" %>
+<span class="info-count-red"><%= Attendance.where(change_superior_id: current_user.name).where(:change_status => 2..3 ).count %>件の通知があります</span>
+<% else %>
+ 【勤怠変更申請のお知らせ】
+ <%= Attendance.where(change_superior_id: current_user.name).where(:change_status => 2..3 ).count %>
+<% end %>
+ </div>
 <div>
 <% if Attendance.where(superior_id: current_user.name).where(:status => 2..3 ).count > 0 %>
 <%= link_to "【残業申請のお知らせ】", attendances_approval_zangyo_info_user_path(name: @user.name), remote: true, id: "link" %>
@@ -39,8 +49,8 @@
 <% else %>
 【残業申請のお知らせ】
 <% end %>
-<% end %>
 </div>
+<% end %>
 <% end %>
 <div>
  <%if current_user == @user %> 
@@ -135,7 +145,7 @@
            <% end %>
           </td>
           <td><%= day.gyoumu %></td>
-          <td>
+          <td><%=day.superior_id if day.superior_id.present? %>
           <% if day.status != 0 %>
           残業<%= $status[day.status] %>
           <% end %>
@@ -167,3 +177,4 @@
 <!--モーダルウインドウ表示-->
 <div id="edit-zangyo-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="approval-zangyo-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="approval-change-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
