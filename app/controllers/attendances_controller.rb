@@ -126,6 +126,10 @@ class AttendancesController < ApplicationController
     redirect_to @user
   end
   
+  def change_log
+    @attendances = Attendance.where(user_id: current_user.id).where(change_status: 1)
+  end
+  
    private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params

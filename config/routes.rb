@@ -31,6 +31,8 @@ Rails.application.routes.draw do
       
       get 'attendances/approval_change_info'
       patch 'attendances/update_approval_change_info'
+      
+      get 'attendances/change_log' 
     end
     resources :attendances, only: :update 
   end
