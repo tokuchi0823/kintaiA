@@ -39,7 +39,6 @@
 <span class="info-count-red"><%= Attendance.where(change_superior_id: current_user.name).where(:change_status => 2..3 ).count %>件の通知があります</span>
 <% else %>
  【勤怠変更申請のお知らせ】
- <%= Attendance.where(change_superior_id: current_user.name).where(:change_status => 2..3 ).count %>
 <% end %>
  </div>
 <div>
@@ -129,7 +128,13 @@
           </td>
           <td>
           <% if day.started_at.present? && day.finished_at.present? %>
-           <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+           <% if day.next_day_flag? %>
+            <% wk_time = 24 %>
+            <% str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+            <%= str_times = str_times.to_f + wk_time.to_f %>
+           <% else %>
+            <%= str_times = working_times(day.started_at.floor_to(15.minutes), day.finished_at.floor_to(15.minutes)) %>
+           <% end %> 
            <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
           <% end %>
           </td>
@@ -148,6 +153,10 @@
           <td><%=day.superior_id if day.superior_id.present? %>
           <% if day.status != 0 %>
           残業<%= $status[day.status] %>
+          <% end %>
+          <BR><%=day.change_superior_id if day.change_superior_id.present? %>
+          <% if day.change_status != 0 %>
+          勤怠編集<%= $status[day.change_status] %>
           <% end %>
           </td>
         </tr>

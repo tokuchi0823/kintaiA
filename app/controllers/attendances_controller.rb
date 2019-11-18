@@ -36,19 +36,24 @@ class AttendancesController < ApplicationController
   
   def update_one_month
    ActiveRecord::Base.transaction do # トランザクションを開始します。
-    if attendances_invalid? 
+    #if attendances_invalid? 
      attendances_params.each do |id, item|
       attendance = Attendance.find(id)
       if !item[:change_superior_id].blank?
+        if item[:started_at].blank? || item[:finished_at].blank?
+          raise  ActiveRecord::RecordInvalid
+          #flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました0000。"
+          #redirect_to attendances_edit_one_month_user_url(date: params[:date])
+        end
       attendance.update_attributes!(item)
       end
      end
       flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
       redirect_to user_url(date: params[:date])
-    else
-      flash[:danger] = "不正な時間入力がありました、再入力してください。"
-      redirect_to attendances_edit_one_month_user_url(date: params[:date])
-    end
+    #else
+    #  flash[:danger] = "不正な時間入力がありました、再入力してください。"
+    #  redirect_to attendances_edit_one_month_user_url(date: params[:date])
+    #end
    end
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
@@ -94,10 +99,37 @@ class AttendancesController < ApplicationController
     redirect_to @user
   end
   
+  
+  def approval_change_info
+    #@attendances = Attendance.find(params[:id])
+    @attendances = Attendance.where(change_superior_id: params[:name]).where(:change_status => 2..3 ).order(:user_id)
+    #@user = User.find_by
+  end
+  
+  def update_approval_change_info
+    #@attendance = Attendance.find(params[:id])
+     ActiveRecord::Base.transaction do # トランザクションを開始します。
+       attendances_params_zz.each do |id, item|
+        attendance = Attendance.find(id)
+        if item[:check] == "1"
+         attendance.update_attributes!(item)
+        end
+       end
+      #@attendance.update_attributes(attendances_params_z)
+      #@attendance = Attendance.find(params[:id])
+      @user = User.find(current_user.id)
+      flash[:info] = "残業申請を更新しました"
+      redirect_to @user
+     end
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to @user
+  end
+  
    private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :second_start_time, :change_superior_id, :change_status])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :second_start_time, :second_end_time, :change_superior_id, :change_status, :next_day_flag])[:attendances]
     end
     
     def attendances_params_z
@@ -105,7 +137,7 @@ class AttendancesController < ApplicationController
     end
     
     def attendances_params_zz
-      params.require(:attendance).permit(attendances: [:end_plan, :superior_id, :gyoumu, :next_day_flag, :status, :check])[:attendances]
+      params.require(:attendance).permit(attendances: [:end_plan, :superior_id, :gyoumu, :next_day_flag, :status, :check, :change_status])[:attendances]
     end
     
     def admin_or_correct_user

@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20191113150024) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "end_plan"
-    t.boolean "next_day_flag"
+    t.boolean "next_day_flag", default: false
     t.string "gyoumu"
     t.integer "status", default: 0
     t.string "superior_id"
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20191113150024) do
     t.datetime "first_end_time"
     t.datetime "second_start_time"
     t.datetime "second_end_time"
-    t.integer "change_status"
+    t.integer "change_status", default: 0
     t.string "change_superior_id"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
@@ -52,12 +52,12 @@ ActiveRecord::Schema.define(version: 20191113150024) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2019-11-06 23:00:00"
-    t.datetime "work_time", default: "2019-11-06 22:30:00"
+    t.datetime "basic_time", default: "2019-11-16 23:00:00"
+    t.datetime "work_time", default: "2019-11-16 22:30:00"
     t.string "employee_number"
     t.string "uid"
-    t.datetime "designated_work_start_time", default: "2019-11-07 00:00:00"
-    t.datetime "designated_work_end_time", default: "2019-11-07 09:00:00"
+    t.datetime "designated_work_start_time", default: "2019-11-17 00:00:00"
+    t.datetime "designated_work_end_time", default: "2019-11-17 09:00:00"
     t.boolean "superior", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
   end
