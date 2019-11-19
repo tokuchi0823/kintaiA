@@ -1,10 +1,11 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :edit_zangyo_info, :update_zangyo_info]
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy,:edit_zangyo_info, :update_zangyo_info]
-  #before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index, :edit, :update]
+  before_action :correct_user, only: [:edit]#, :update]
+  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index, :on_duty]#, :edit, :update]
   before_action :set_one_month, only: :show 
   #before_action :admin_correct_user, only: :show
+  before_action :not_admin_current_user, only: :show 
  
   def index
     @users = User.paginate(page: params[:page], per_page: 20).search(params[:search])
@@ -44,7 +45,7 @@ class UsersController < ApplicationController
   def update
    if @user.update_attributes(user_params)
     flash[:success] = "ユーザー情報を更新しました。"
-    redirect_to users_url
+    redirect_to root_url
    else
     render :edit
    end

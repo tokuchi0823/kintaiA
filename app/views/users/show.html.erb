@@ -31,7 +31,12 @@
 <%if current_user == @user %> 
 <% if current_user.superior?%>
 <div>
+ <% if Attendance.where(one_month_superior_id: current_user.name).where(:one_month_status => 2..3 ).count > 0 %>
+<%= link_to "【所属長承認申請のお知らせ】", attendances_approval_one_month_info_user_path(name: @user.name), remote: true, id: "link" %>
+<span class="info-count-red"><%= Attendance.where(one_month_superior_id: current_user.name).where(:one_month_status => 2..3 ).count %>件の通知があります</span>
+<% else %>
  【所属長承認申請のお知らせ】
+<% end %>
  </div>
 <div>
  <% if Attendance.where(change_superior_id: current_user.name).where(:change_status => 2..3 ).count > 0 %>
@@ -173,8 +178,21 @@
         <td rowspan="2"></td>
         <td rowspan="2"></td>
         <td rowspan="2">
-          
-          <%= link_to "申請", user_attendance_path(@user), method: :patch, class: "btn btn-primary btn-attendance" %>
+         <%if current_user == @user %> 
+          所属長承認:
+          <% if @attendances.last.one_month_status.blank? %>
+           未<%=@attendances.last.one_month_status %>
+          <% else %>
+           <%= $status[@attendances.last.one_month_status]%>
+          <% end %>
+          <br>
+          <%= form_with(model: @attendances.last,url: attendances_update_approval_one_month_path(@attendances.last),method: :patch, local: true) do |f| %>
+           <%= f.select :one_month_superior_id, User.where(superior: true).pluck(:name) ,class: "form-control" %>
+           <%= f.hidden_field :one_month_status, :value => 3, class: "form-control" %>
+           <br>
+           <%= f.submit "申請", class: "btn btn-primary btn-attendance" %>
+          <% end %>
+         <% end %> 
         </td>
       </tr>
       <tr>
@@ -190,3 +208,4 @@
 <div id="edit-zangyo-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="approval-zangyo-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
 <div id="approval-change-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="approval-one-month-info" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

@@ -40,6 +40,8 @@
               <td><%= f.text_field :gyoumu, class: "form-control" %></td>
               <td><%= f.select :superior_id, User.where(superior: true).pluck(:name),class: "form-control" %></td>
               <%= f.hidden_field :status, :value => 3%>
+              <%= f.hidden_field :date, :value => @attendance.worked_on%>
+              <%= f.hidden_field :u_id, :value => @attendance.user_id%>
            </tbody>
           </table>
         <div><%= f.submit "変更を送信する", class: "btn btn-primary btn-block btn-signup" %></div>

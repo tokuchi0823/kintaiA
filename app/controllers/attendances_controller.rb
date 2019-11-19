@@ -5,6 +5,7 @@ class AttendancesController < ApplicationController
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: [:edit_one_month, :csv_output]#, :edit_zangyo_info]
+  before_action :not_admin_user,only: [:edit_one_month]
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
 
@@ -118,7 +119,7 @@ class AttendancesController < ApplicationController
       #@attendance.update_attributes(attendances_params_z)
       #@attendance = Attendance.find(params[:id])
       @user = User.find(current_user.id)
-      flash[:info] = "残業申請を更新しました"
+      flash[:info] = "勤怠変更申請を更新しました。"
       redirect_to @user
      end
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
@@ -135,6 +136,43 @@ class AttendancesController < ApplicationController
     send_data render_to_string, filename: "attendances.csv", type: :csv
   end
   
+  def update_approval_one_month
+    @attendance = Attendance.find(params[:format])
+    #@attendance.update_columns(params[:end_plan])
+    @user = User.find(@attendance.user_id)
+    @attendance.update_attributes(attendances_params_one_month)
+   #@attendance.update_attribute(:one_month_status, params[:one_month_status])
+    #@attendance.update_attribute(:one_month_superior_id, params[:one_month_superior_id])
+    flash[:info] = "所属長承認申請を送信しました。"
+    redirect_to @user
+  end
+  
+  def approval_one_month_info
+    #@attendances = Attendance.find(params[:id])
+    @attendances = Attendance.where(one_month_superior_id: params[:name]).where(:one_month_status => 2..3 ).order(:user_id)
+    #@user = User.find_by
+  end
+  
+  def update_approval_one_month_info
+       #@attendance = Attendance.find(params[:id])
+     ActiveRecord::Base.transaction do # トランザクションを開始します。
+       attendances_params_zzz.each do |id, item|
+        attendance = Attendance.find(id)
+        if item[:check] == "1"
+         attendance.update_attributes!(item)
+        end
+       end
+      #@attendance.update_attributes(attendances_params_z)
+      #@attendance = Attendance.find(params[:id])
+      @user = User.find(current_user.id)
+      flash[:info] = "所属長承認申請を更新しました。"
+      redirect_to @user
+     end
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to @user
+  end
+  
    private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
@@ -145,8 +183,16 @@ class AttendancesController < ApplicationController
       params.require(:attendance).permit(:end_plan, :superior_id, :gyoumu, :next_day_flag, :status)
     end
     
+     def attendances_params_one_month
+      params.require(:attendance).permit(:one_month_superior_id, :one_month_status)
+    end
+    
     def attendances_params_zz
       params.require(:attendance).permit(attendances: [:end_plan, :superior_id, :gyoumu, :next_day_flag, :status, :check, :change_status])[:attendances]
+    end
+    
+    def attendances_params_zzz
+      params.require(:attendance).permit(attendances: [:one_month_status, :check])[:attendances]
     end
     
     def admin_or_correct_user

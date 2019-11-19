@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   
   post '/users', to: 'users#insert'
   
+  patch 'attendances/update_approval_one_month', to: 'attendances#update_approval_one_month'
+  
   resources :bases
   
   resources :users do
@@ -34,6 +36,9 @@ Rails.application.routes.draw do
       
       get 'attendances/change_log' 
       get 'attendances/csv_output'
+      
+      get 'attendances/approval_one_month_info'
+      patch 'attendances/update_approval_one_month_info'
     end
     resources :attendances, only: :update 
   end

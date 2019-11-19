@@ -47,7 +47,7 @@
     <% @users.each do |user| %>
      <%if !user.admin? %>
       <tr>
-        <td><%= link_to user.name, user %>
+        <td><%= user.name %>
         <% if current_user.admin? && !current_user?(user) %>
          <div>
           ｜<%= link_to "削除", user, method: :delete,
