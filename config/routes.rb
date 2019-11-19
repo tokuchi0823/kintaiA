@@ -33,6 +33,7 @@ Rails.application.routes.draw do
       patch 'attendances/update_approval_change_info'
       
       get 'attendances/change_log' 
+      get 'attendances/csv_output'
     end
     resources :attendances, only: :update 
   end

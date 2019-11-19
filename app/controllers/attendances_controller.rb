@@ -1,10 +1,10 @@
 class AttendancesController < ApplicationController
   include AttendancesHelper
-  before_action :set_user, only: [:edit_one_month, :update_one_month]
+  before_action :set_user, only: [:edit_one_month, :update_one_month, :csv_output]
   #before_action :set_user_attendance,only: [:edit_zangyo_info]
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
-  before_action :set_one_month, only: [:edit_one_month]#, :edit_zangyo_info]
+  before_action :set_one_month, only: [:edit_one_month, :csv_output]#, :edit_zangyo_info]
 
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
 
@@ -69,7 +69,7 @@ class AttendancesController < ApplicationController
     #@attendance.update_columns(params[:end_plan])
     @user = User.find(@attendance.user_id)
     @attendance.update_attributes(attendances_params_z)
-    flash[:info] = "残業申請を送信しました"
+    flash[:info] = "残業申請を送信しました。"
     redirect_to @user
   end
   
@@ -91,7 +91,7 @@ class AttendancesController < ApplicationController
       #@attendance.update_attributes(attendances_params_z)
       #@attendance = Attendance.find(params[:id])
       @user = User.find(current_user.id)
-      flash[:info] = "残業申請を更新しました"
+      flash[:info] = "残業申請を更新しました。"
       redirect_to @user
      end
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
@@ -128,6 +128,11 @@ class AttendancesController < ApplicationController
   
   def change_log
     @attendances = Attendance.where(user_id: current_user.id).where(change_status: 1)
+  end
+  
+  def csv_output
+    #@attendances = Attendance.where(user_id: current_user.id)
+    send_data render_to_string, filename: "attendances.csv", type: :csv
   end
   
    private
