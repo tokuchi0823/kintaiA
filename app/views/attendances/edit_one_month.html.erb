@@ -51,7 +51,7 @@
             <% end %>
            </td>
            <td><%= attendance.text_field :note, class: "form-control" %></td>
-           <td><%= attendance.select :change_superior_id, User.where(superior: true).pluck(:name),include_blank: true,class: "form-control" %></td>
+           <td><%= attendance.select :change_superior_id, User.where(superior: true).where.not(name: current_user.name).pluck(:name),include_blank: true,class: "form-control" %></td>
                <%= attendance.hidden_field :change_status, value: 3%>
           </tr>
          <% end %>
