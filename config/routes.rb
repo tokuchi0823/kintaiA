@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   patch 'update-basic-info', to: 'users#update_basic_info'
   get '/on_duty', to: 'users#on_duty'
   
-  post '/users', to: 'users#insert'
+  #post '/users', to: 'users#insert'
   
   patch 'attendances/update_approval_one_month', to: 'attendances#update_approval_one_month'
   
@@ -42,5 +42,6 @@ Rails.application.routes.draw do
     end
     resources :attendances, only: :update 
   end
+  post '/users', to: 'users#insert'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
